@@ -14,10 +14,11 @@ no images and no other assets: each loader is a single composable drawn on a `Ca
 
 ## Install
 
-Through [JitPack](https://jitpack.io):
+[![JitPack](https://jitpack.io/v/zainkhalid91/compose-loaders.svg)](https://jitpack.io/#zainkhalid91/compose-loaders)
+
+**1. Add the JitPack repository** in `settings.gradle.kts`:
 
 ```kotlin
-// settings.gradle.kts
 dependencyResolutionManagement {
     repositories {
         google()
@@ -25,12 +26,41 @@ dependencyResolutionManagement {
         maven("https://jitpack.io")
     }
 }
+```
 
-// build.gradle.kts
+**2. Add the dependency** to your module's `build.gradle.kts`:
+
+```kotlin
 dependencies {
     implementation("com.github.zainkhalid91.compose-loaders:loaders:0.1.0")
 }
 ```
+
+<details>
+<summary>Groovy, version catalog, Compose Multiplatform</summary>
+
+Groovy (`settings.gradle` / `build.gradle`):
+
+```groovy
+maven { url 'https://jitpack.io' }
+
+implementation 'com.github.zainkhalid91.compose-loaders:loaders:0.1.0'
+```
+
+Version catalog (`gradle/libs.versions.toml`):
+
+```toml
+[libraries]
+compose-loaders = { module = "com.github.zainkhalid91.compose-loaders:loaders", version = "0.1.0" }
+```
+
+Compose Multiplatform: add it to `commonMain.dependencies { }`. Android and desktop (JVM)
+targets are published.
+
+</details>
+
+Requirements: minSdk 23, compileSdk 36, Kotlin 2.0 or newer. The library is built against
+Compose 1.10; if your app uses a newer Compose, Gradle uses yours.
 
 ## Use
 

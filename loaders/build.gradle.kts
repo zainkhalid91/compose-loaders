@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -10,10 +11,16 @@ plugins {
 
 kotlin {
     explicitApi()
+    // Kotlin 2.1 metadata and stdlib keep the library usable from apps on Kotlin 2.0 and newer.
+    coreLibrariesVersion = "2.1.20"
+    compilerOptions {
+        languageVersion.set(KotlinVersion.KOTLIN_2_1)
+        apiVersion.set(KotlinVersion.KOTLIN_2_1)
+    }
 
     android {
         namespace = "io.github.zainkhalid91.loaders"
-        compileSdk = 37
+        compileSdk = 36
         minSdk = 23
         compilerOptions { jvmTarget.set(JvmTarget.JVM_11) }
     }
@@ -24,10 +31,10 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(libs.compose.runtime)
-            api(libs.compose.foundation)
-            api(libs.compose.ui)
-            implementation(libs.compose.animation)
+            api(libs.lib.compose.runtime)
+            api(libs.lib.compose.foundation)
+            api(libs.lib.compose.ui)
+            implementation(libs.lib.compose.animation)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

@@ -15,4 +15,4 @@ dependencyResolutionManagement {
     }
 }
 
-include(":loaders", ":gallery", ":sample")
+include(":loaders", ":gallery", ":sample", ":benchmark")

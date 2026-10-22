@@ -12,14 +12,19 @@ import io.github.zainkhalid91.loaders.CometSpinner
 import io.github.zainkhalid91.loaders.DnaHelix
 import io.github.zainkhalid91.loaders.DualRing
 import io.github.zainkhalid91.loaders.ExpressiveArc
+import io.github.zainkhalid91.loaders.FireworkBurst
 import io.github.zainkhalid91.loaders.FlippingSquare
 import io.github.zainkhalid91.loaders.GridPulse
 import io.github.zainkhalid91.loaders.HeartbeatLine
+import io.github.zainkhalid91.loaders.Hourglass
 import io.github.zainkhalid91.loaders.InfinityTrail
 import io.github.zainkhalid91.loaders.LiquidFill
 import io.github.zainkhalid91.loaders.MorphingPolygon
 import io.github.zainkhalid91.loaders.NewtonCradle
+import io.github.zainkhalid91.loaders.PacDots
 import io.github.zainkhalid91.loaders.PulseRipple
+import io.github.zainkhalid91.loaders.RadarSweep
+import io.github.zainkhalid91.loaders.SlidingBar
 import io.github.zainkhalid91.loaders.SpokeSpinner
 import io.github.zainkhalid91.loaders.StripedBar
 import io.github.zainkhalid91.loaders.WaveBars
@@ -60,5 +65,10 @@ public object LoaderCatalog {
         LoaderEntry(18, "ClockSpinner", LoaderCategory.Spinner, "2026-W43") { ClockSpinner(color = it) },
         LoaderEntry(19, "BouncingBall", LoaderCategory.Physics, "2026-W43") { BouncingBall(color = it) },
         LoaderEntry(20, "StripedBar", LoaderCategory.Bars, "2026-W43") { StripedBar(color = it, width = 110.dp) },
+        LoaderEntry(21, "RadarSweep", LoaderCategory.Spinner, "2026-W44") { RadarSweep(color = it) },
+        LoaderEntry(22, "Hourglass", LoaderCategory.Physics, "2026-W44") { Hourglass(color = it) },
+        LoaderEntry(23, "PacDots", LoaderCategory.Dots, "2026-W44") { PacDots(color = it) },
+        LoaderEntry(24, "SlidingBar", LoaderCategory.Bars, "2026-W44") { SlidingBar(color = it, width = 110.dp) },
+        LoaderEntry(25, "FireworkBurst", LoaderCategory.Shapes, "2026-W44") { FireworkBurst(color = it) },
     )
 }

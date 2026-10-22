@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Bench" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#FF0F1115</item>
+    </style>
+</resources>

@@ -39,6 +39,11 @@ fails the build if it drifts from `LoaderCatalog` or from the public functions i
 | 18 | `ClockSpinner` | Spinner | clock hands race; hour hand turns once per 12 minute turns | 2026-W43 |
 | 19 | `BouncingBall` | Physics | gravity bounce with squash on impact and a growing shadow | 2026-W43 |
 | 20 | `StripedBar` | Bars | pill bar with diagonal candy stripes scrolling (barber pole) | 2026-W43 |
+| 21 | `RadarSweep` | Spinner | filled gradient beam sweeps a scope; fixed blips light as it passes, then fade | 2026-W44 |
+| 22 | `Hourglass` | Physics | sand drains top to bottom through a neck, then the glass flips 180 degrees | 2026-W44 |
+| 23 | `PacDots` | Dots | chomping mouth eats a row of dots that slides in one slot per loop | 2026-W44 |
+| 24 | `SlidingBar` | Bars | linear indeterminate: one segment stretches in, crosses the track, shrinks out | 2026-W44 |
+| 25 | `FireworkBurst` | Shapes | two staggered rings of sparks fly out, droop under gravity and fade | 2026-W44 |
 
 ## Backlog (ideas not yet built)
 
@@ -48,16 +53,11 @@ Pick from here for the weekly batch, then move the row up into **Shipped**.
 - Typing indicator: three dots inside a chat bubble that breathes
 - Wave text: letters of "Loading" jumping one by one
 - Orbiting moons: planet with two moons on different radii and speeds
-- Hourglass: sand drains, glass flips 180 degrees
 - Folding cube: four faces of a cube fold in and out
-- Pac-dots: mouth chomps along a row of dots
 - Segmented ring: ring of arcs lighting up in sequence like a progress dial
-- Sliding linear bar: indeterminate segment sliding along a track (Material linear)
 - Skeleton shimmer: placeholder blocks with a moving highlight
-- Firework burst: particles explode from the centre and fall
 - Spiral galaxy: particles spiral inward and respawn at the rim
 - Pendulum: single pendulum with motion blur trail
-- Radar sweep: rotating beam with blips that fade
 - Rubik tiles: 2x2 tiles sliding into each other's places
 - Breathing circle: concentric filled circles expanding and contracting (meditation style)
 - Domino fall: a row of tiles toppling and resetting

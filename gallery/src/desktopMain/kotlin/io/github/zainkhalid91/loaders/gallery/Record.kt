@@ -19,6 +19,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.zainkhalid91.loaders.ProvideLoaderDefaults
 import org.jetbrains.skia.EncodedImageFormat
 import java.io.File
 
@@ -40,14 +41,14 @@ fun main(args: Array<String>) {
             }
         }
     }
-    record(File(out, "all"), 1000, 900, frames) { Sheet() }
+    record(File(out, "all"), 1000, 180 * ((LoaderCatalog.entries.size + 4) / 5) + 40, frames) { Sheet() }
     println("Wrote $frames frames per loader to ${out.absolutePath}")
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 private fun record(dir: File, width: Int, height: Int, frames: Int, content: @Composable () -> Unit) {
     dir.mkdirs()
-    val scene = ImageComposeScene(width, height, Density(2f), content = content)
+    val scene = ImageComposeScene(width, height, Density(2f)) { ProvideLoaderDefaults(config = GalleryConfig, content = content) }
     try {
         // Frame 0 starts the animations; the clock then advances in 1/Fps steps from there.
         for (i in 0..frames) {

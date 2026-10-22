@@ -34,11 +34,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.zainkhalid91.loaders.LoaderConfig
+import io.github.zainkhalid91.loaders.ProvideLoaderDefaults
 
-private val Background = Color(0xFF0F1115)
-private val Card = Color(0xFF181B22)
-private val CardBorder = Color(0xFF262A33)
-private val Muted = Color(0xFF8A90A0)
+internal val Background = Color(0xFF0F1115)
+internal val Card = Color(0xFF181B22)
+internal val CardBorder = Color(0xFF262A33)
+internal val Muted = Color(0xFF8A90A0)
 
 /** Tints the gallery can switch between, so every loader is seen on more than one colour. */
 public val GalleryPalette: List<Color> = listOf(
@@ -49,19 +51,53 @@ public val GalleryPalette: List<Color> = listOf(
     Color(0xFF34D399),
 )
 
-/** Every loader in [LoaderCatalog] on one scrolling grid, with a colour picker. */
+/** Every loader in [LoaderCatalog] on a grid with a colour picker, plus a playground tab. */
 @Composable
 public fun LoaderGallery(modifier: Modifier = Modifier) {
     var tint by remember { mutableStateOf(GalleryPalette.first()) }
+    var playground by remember { mutableStateOf(false) }
+    Column(modifier.fillMaxSize().background(Background).safeDrawingPadding()) {
+        Row(Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Tab("Gallery", !playground) { playground = false }
+            Tab("Playground", playground) { playground = true }
+        }
+        if (playground) {
+            Playground()
+        } else {
+            // Many loaders on one screen: announcing each one would flood a screen reader.
+            ProvideLoaderDefaults(config = GalleryConfig) {
+                LoaderGrid(Modifier, tint) { tint = it }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Tab(text: String, selected: Boolean, onClick: () -> Unit) {
+    BasicText(
+        text,
+        Modifier
+            .background(if (selected) Card else Color.Transparent, RoundedCornerShape(50))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        style = TextStyle(color = if (selected) Color.White else Muted, fontSize = 14.sp, fontWeight = FontWeight.SemiBold),
+    )
+}
+
+/** Config for screens that show many loaders at once. */
+internal val GalleryConfig = LoaderConfig(announce = false)
+
+@Composable
+private fun LoaderGrid(modifier: Modifier, tint: Color, onTint: (Color) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(150.dp),
-        modifier = modifier.fillMaxSize().background(Background).safeDrawingPadding(),
+        modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
-            Header(tint = tint, onTint = { tint = it })
+            Header(tint = tint, onTint = onTint)
         }
         items(LoaderCatalog.entries, key = { it.id }) { entry ->
             LoaderCard(entry, tint)

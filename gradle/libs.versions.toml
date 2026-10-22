@@ -7,6 +7,7 @@ compose-multiplatform = "1.12.1"
 compose-library = "1.10.3"
 coroutines = "1.10.2"
 activityCompose = "1.12.2"
+lottie = "6.7.1"
 
 [libraries]
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
@@ -15,11 +16,13 @@ compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-mu
 compose-animation = { module = "org.jetbrains.compose.animation:animation", version.ref = "compose-multiplatform" }
 compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose-multiplatform" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 
 lib-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-library" }
 lib-compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-library" }
 lib-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-library" }
+lib-compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "compose-library" }
 lib-compose-animation = { module = "org.jetbrains.compose.animation:animation", version.ref = "compose-library" }
 
 [plugins]

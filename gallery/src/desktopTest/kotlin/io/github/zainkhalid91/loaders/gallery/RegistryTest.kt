@@ -11,6 +11,9 @@ import kotlin.test.fail
  * can't be added twice or shipped without being registered.
  */
 class RegistryTest {
+    // Public composables in :loaders that are not loaders themselves.
+    private val Helpers = setOf("ProvideLoaderDefaults", "LoadingAnnouncer")
+
     private val root = generateSequence(File("").absoluteFile) { it.parentFile }
         .first { File(it, "LOADERS.md").exists() }
 
@@ -42,7 +45,9 @@ class RegistryTest {
         val sources = File(root, "loaders/src/commonMain/kotlin").walk().filter { it.extension == "kt" }
         val public = sources.flatMap { file ->
             Regex("""@Composable\s+public fun (\w+)\(""").findAll(file.readText()).map { it.groupValues[1] }
-        }.toSet()
+        }
+            .filterNot { it in Helpers }
+            .toSet()
         assertTrue(public.isNotEmpty(), "found no public loaders; did the source layout move?")
         val missing = public - registry.map { it.second }.toSet()
         if (missing.isNotEmpty()) fail("Public loaders missing from LOADERS.md: $missing")

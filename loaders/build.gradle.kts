@@ -39,6 +39,10 @@ kotlin {
         commonTest.dependencies {
             implementation(kotlin("test"))
         }
+        getByName("desktopTest").dependencies {
+            implementation(libs.lib.compose.ui.test)
+            implementation(compose.desktop.currentOs)
+        }
     }
 }
 

@@ -12,5 +12,5 @@ val jitpack = System.getenv("JITPACK") == "true"
 
 allprojects {
     group = if (jitpack) "${System.getenv("GROUP")}.${System.getenv("ARTIFACT")}" else "io.github.zainkhalid91"
-    version = if (jitpack) System.getenv("VERSION") else "0.1.0"
+    version = if (jitpack) System.getenv("VERSION") else "0.2.0"
 }

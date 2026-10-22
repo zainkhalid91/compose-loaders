@@ -1,8 +1,6 @@
 package io.github.zainkhalid91.loaders
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -18,33 +16,29 @@ import kotlin.math.sin
 @Composable
 public fun CometSpinner(
     modifier: Modifier = Modifier,
-    color: Color = LoaderDefaults.color,
+    color: Color = LocalLoaderColor.current,
     size: Dp = LoaderDefaults.size,
     durationMillis: Int = 900,
+    strokeWidth: Dp = Dp.Unspecified,
+    progress: Float? = null,
+    config: LoaderConfig = LocalLoaderConfig.current,
 ) {
-    val progress by rememberLoopProgress(durationMillis)
-    Canvas(modifier.loader(size)) {
+    LoaderCanvas(modifier, size, size, durationMillis, progress, config) { motion ->
         val d = this.size.minDimension
-        val stroke = d * 0.1f
+        val stroke = strokePx(strokeWidth, d * 0.1f)
         val radius = (d - stroke * 1.6f) / 2f
         val sweep = 288f
-        val brush = Brush.sweepGradient(
-            0f to Color.Transparent,
-            sweep / 360f to color,
-            center = center,
-        )
-        rotate(progress * 360f) {
-            drawArc(
-                brush = brush,
-                startAngle = 0f,
-                sweepAngle = sweep,
-                useCenter = false,
-                topLeft = Offset(center.x - radius, center.y - radius),
-                size = Size(radius * 2f, radius * 2f),
-                style = Stroke(stroke),
-            )
-            val a = sweep * Pi / 180f
-            drawCircle(color, stroke * 0.8f, Offset(center.x + radius * cos(a), center.y + radius * sin(a)))
+        val brush = Brush.sweepGradient(0f to Color.Transparent, sweep / 360f to color, center = center)
+        val style = Stroke(stroke)
+        val topLeft = Offset(center.x - radius, center.y - radius)
+        val arcSize = Size(radius * 2f, radius * 2f)
+        val a = sweep * Pi / 180f
+        val head = Offset(center.x + radius * cos(a), center.y + radius * sin(a))
+        onDrawBehind {
+            rotate(motion.progress * 360f) {
+                drawArc(brush, 0f, sweep, false, topLeft, arcSize, style = style)
+                drawCircle(color, stroke * 0.8f, head)
+            }
         }
     }
 }

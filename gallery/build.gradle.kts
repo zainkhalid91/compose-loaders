@@ -43,8 +43,22 @@ tasks.register<JavaExec>("recordFrames") {
     args(layout.buildDirectory.dir("frames").get().asFile.absolutePath)
 }
 
+// ./gradlew :gallery:recordDemoReel renders the 1080 x 1350 feature demo to build/demoreel.
+tasks.register<JavaExec>("recordDemoReel") {
+    description = "Renders the feature demo reel frame by frame to build/demoreel"
+    classpath(desktopMain.output.allOutputs, desktopMain.runtimeDependencyFiles)
+    mainClass.set("io.github.zainkhalid91.loaders.gallery.DemoReelKt")
+    args(layout.buildDirectory.dir("demoreel").get().asFile.absolutePath)
+}
+
 compose.desktop {
     application {
         mainClass = "io.github.zainkhalid91.loaders.gallery.MainKt"
     }
+}
+
+// The flash and allocation checks render every loader for hundreds of frames.
+tasks.named<Test>("desktopTest") {
+    maxHeapSize = "2g"
+    testLogging { showStandardStreams = true }
 }

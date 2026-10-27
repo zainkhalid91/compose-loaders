@@ -44,23 +44,37 @@ fails the build if it drifts from `LoaderCatalog` or from the public functions i
 | 23 | `PacDots` | Dots | chomping mouth eats a row of dots that slides in one slot per loop | 2026-W44 |
 | 24 | `SlidingBar` | Bars | linear indeterminate: one segment stretches in, crosses the track, shrinks out | 2026-W44 |
 | 25 | `FireworkBurst` | Shapes | two staggered rings of sparks fly out, droop under gravity and fade | 2026-W44 |
+| 26 | `TypingBubble` | Dots | chat bubble breathes while its dots brighten and lift in turn (someone typing) | 2026-W45 |
+| 27 | `WaveText` | Text | letters of a word hop one after another and brighten as they rise | 2026-W45 |
+| 28 | `OrbitingMoons` | Path | moons on tilted orbits at different speeds pass behind a planet, shrinking with distance | 2026-W45 |
+| 29 | `FoldingCube` | Shapes | four quarters of a diamond fold in one by one around the centre, hold, fold away | 2026-W45 |
+| 30 | `SegmentedRing` | Spinner | separate arc segments fill one by one round a dial, then empty in the same order | 2026-W45 |
+| 31 | `SkeletonShimmer` | Placeholder | placeholder avatar and text lines with a diagonal highlight sweeping across | 2026-W45 |
+| 32 | `SpiralGalaxy` | Path | stars drift inward along turning spiral arms, fading into a glowing core | 2026-W45 |
+| 33 | `Pendulum` | Physics | single pendulum swing with fading afterimages, fastest at the bottom | 2026-W45 |
+| 34 | `SlidingTiles` | Shapes | three tiles take turns sliding into the empty corner of a 2x2 puzzle | 2026-W45 |
+| 35 | `BreathingCircle` | Shapes | layered discs breathe in, hold, out, hold; outer layers lag behind (meditation) | 2026-W45 |
+| 36 | `DominoFall` | Physics | row of dominoes topples one into the next, last falls flat, row resets | 2026-W45 |
+| 37 | `NeonTrace` | Path | glowing pen traces a rounded outline, flares to full glow, then wipes away | 2026-W45 |
+| 38 | `BatteryCharge` | Fill | battery cells light one by one from empty to full, hold, then drain | 2026-W45 |
+| 39 | `Rocket` | Physics | rocket bobs and sways with a particle exhaust while stars stream past | 2026-W45 |
+| 40 | `SignalBars` | Bars | bottom-aligned staircase bars; strength wanders up and down like a live signal | 2026-W45 |
+| 41 | `GearPair` | Spinner | two meshing gears counter-rotate at the ratio of their teeth | 2026-W45 |
+| 42 | `YinYang` | Spinner | yin-yang turns half a revolution with easing, pauses, turns again | 2026-W45 |
+| 43 | `SpringCoil` | Physics | weight bounces on a hanging spring whose coils bunch and spread | 2026-W45 |
+| 44 | `GooeyOrbit` | Shapes | blobs orbit a centre drop and stretch from it with liquid metaball bridges | 2026-W45 |
+| 45 | `HeartPulse` | Shapes | heart beats a lub-dub double beat and sends out a fading outline echo | 2026-W45 |
 
 ## Backlog (ideas not yet built)
 
 Pick from here for the weekly batch, then move the row up into **Shipped**.
 
-- Gooey metaballs: blobs that merge and split (needs a blur/threshold trick that works below API 31)
-- Typing indicator: three dots inside a chat bubble that breathes
-- Wave text: letters of "Loading" jumping one by one
-- Orbiting moons: planet with two moons on different radii and speeds
-- Folding cube: four faces of a cube fold in and out
-- Segmented ring: ring of arcs lighting up in sequence like a progress dial
-- Skeleton shimmer: placeholder blocks with a moving highlight
-- Spiral galaxy: particles spiral inward and respawn at the rim
-- Pendulum: single pendulum with motion blur trail
-- Rubik tiles: 2x2 tiles sliding into each other's places
-- Breathing circle: concentric filled circles expanding and contracting (meditation style)
-- Domino fall: a row of tiles toppling and resetting
-- Neon sign: outline tracing itself, then glowing
-- Battery charge: cells filling one by one
-- Rocket: small rocket bobbing with an exhaust trail
+- Wifi arcs: arcs above a dot light outward in turn
+- Snake: a segmented snake winds round a small grid
+- Ink drop: a drop falls into liquid and sends out a crown splash
+- Orbiting squares: squares orbiting a centre, each spinning on its own axis
+- Paper plane: a plane loops along a dotted path
+- Eclipse: a dark disc slides across a glowing one and out again
+- Tetris: falling blocks stack and clear a line
+- Equaliser circle: radial bars round a ring pulsing like audio
+

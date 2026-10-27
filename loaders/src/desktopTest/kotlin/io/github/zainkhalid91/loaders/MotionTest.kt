@@ -51,6 +51,16 @@ class MotionTest {
     }
 
     @Test
+    fun reversePlaysBackwardsAtTheSameSpeed() {
+        val forward = sample(LoaderConfig(), 31)
+        val backward = sample(LoaderConfig(reverse = true), 31)
+        // Going backwards, each step is small when measured the other way round.
+        val backSteps = backward.zipWithNext { a, b -> fract(a.first - b.first) }
+        assertTrue(backSteps.all { it < 0.1f }, "reverse should move backwards every frame")
+        assertEquals(travelled(forward), backSteps.sum(), travelled(forward) * 0.1f)
+    }
+
+    @Test
     fun pausedLoaderHoldsItsFrame() {
         val samples = sample(LoaderConfig(isRunning = false), 30)
         assertEquals(1, samples.map { it.first }.toSet().size, "a paused loader must not move")

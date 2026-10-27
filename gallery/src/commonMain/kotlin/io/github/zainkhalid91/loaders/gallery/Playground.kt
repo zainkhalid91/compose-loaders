@@ -62,9 +62,10 @@ internal fun Playground(modifier: Modifier = Modifier) {
     var scale by remember { mutableFloatStateOf(1.6f) }
     var motion by remember { mutableStateOf(ReducedMotion.Auto) }
     var running by remember { mutableStateOf(true) }
+    var reverse by remember { mutableStateOf(false) }
     val entry = LoaderCatalog.entries[selected]
     val color = if (hue >= 0f) Color.hsv(hue, 0.62f, 1f) else tint
-    val config = LoaderConfig(speed = speed, isRunning = running, reducedMotion = motion, label = entry.name)
+    val config = LoaderConfig(speed = speed, isRunning = running, reducedMotion = motion, label = entry.name, reverse = reverse)
 
     Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
         Box(
@@ -110,9 +111,11 @@ internal fun Playground(modifier: Modifier = Modifier) {
             Spacer(Modifier.width(8.dp))
             Chip(if (running) "Pause" else "Resume", !running) { running = !running }
         }
+        Spacer(Modifier.height(8.dp))
+        Chip("Reverse", reverse) { reverse = !reverse }
         Section("Code")
         BasicText(
-            snippet(entry.name, color, speed, motion, running),
+            snippet(entry.name, color, speed, motion, running, reverse),
             Modifier
                 .fillMaxWidth()
                 .background(Color(0xFF0B0D11), RoundedCornerShape(12.dp))
@@ -122,11 +125,12 @@ internal fun Playground(modifier: Modifier = Modifier) {
     }
 }
 
-private fun snippet(name: String, color: Color, speed: Float, motion: ReducedMotion, running: Boolean): String {
+private fun snippet(name: String, color: Color, speed: Float, motion: ReducedMotion, running: Boolean, reverse: Boolean): String {
     val options = buildList {
         if (speed != 1f) add("speed = ${format(speed)}f")
         if (motion != ReducedMotion.Auto) add("reducedMotion = ReducedMotion.${motion.name}")
         if (!running) add("isRunning = false")
+        if (reverse) add("reverse = true")
     }
     val hex = (color.toArgb().toLong() and 0xFFFFFFFFL).toString(16).uppercase().padStart(8, '0')
     val config = if (options.isEmpty()) "" else ",\n    config = LoaderConfig(${options.joinToString()})"

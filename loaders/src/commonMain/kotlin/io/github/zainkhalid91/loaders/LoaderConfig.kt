@@ -32,6 +32,7 @@ public enum class ReducedMotion {
  *
  * @param speed Multiplies the loader's own speed. 2f runs twice as fast, 0.5f half as fast.
  * @param isRunning When false the loader stops on its current frame.
+ * @param reverse Plays the loop backwards, so spinners turn counter-clockwise and sweeps run right to left.
  * @param reducedMotion See [ReducedMotion].
  * @param label What a screen reader says, such as "Loading photos". Pass a translated string.
  * @param announce When true the loader is a polite live region: a screen reader announces [label]
@@ -45,6 +46,7 @@ public data class LoaderConfig(
     val reducedMotion: ReducedMotion = ReducedMotion.Auto,
     val label: String = LoaderDefaults.label,
     val announce: Boolean = true,
+    val reverse: Boolean = false,
 ) {
     init {
         require(speed > 0f) { "speed must be positive, was $speed" }

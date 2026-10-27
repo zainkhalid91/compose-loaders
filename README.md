@@ -5,7 +5,9 @@ no images and no other assets: each loader is a single composable drawn on a `Ca
 
 ![All loaders](docs/media/all.gif)
 
-- **25 loaders**, with new ones added every week. [LOADERS.md](LOADERS.md) is the registry, so none repeat.
+https://github.com/zainkhalid91/compose-loaders/raw/main/docs/media/demo-reel.mp4
+
+- **45 loaders**, with new ones added every week. [LOADERS.md](LOADERS.md) is the registry, so none repeat.
 - **Kotlin Multiplatform**: works on Android and Compose Desktop (JVM) from the same artifact.
 - **Cheap to run**: frames redraw without recomposing, and loader draw code allocates nothing per
   frame (strokes, paths and brushes are built once per size). See [Performance](#performance).
@@ -80,11 +82,13 @@ Every loader has the same shape of API:
 |-----------|---------|
 | `modifier` | Applied first, so a size set here wins over `size`. |
 | `color` | Main tint, defaulting to the app-wide colour (see [App-wide defaults](#app-wide-defaults)). Some loaders also take `secondaryColor`, `trackColor`, `shadowColor`, `stripeColor`, `sandColor` or `dotColor`. |
-| `size` | Square loaders: edge length (default 48.dp). Wide loaders: width, with height derived. Bars take `width` and `height`. |
+| `size` | Square loaders: edge length (default 48.dp). Wide loaders: width, with height derived. Bars and `SkeletonShimmer` take `width` and `height`; `WaveText` sizes itself to its text. |
 | `durationMillis` | Length of one cycle. |
-| `strokeWidth` | On ring and line loaders: `SpokeSpinner`, `ExpressiveArc`, `CometSpinner`, `DualRing`, `HeartbeatLine`, `LiquidFill`, `ClockSpinner`, `RadarSweep`, `Hourglass`. Unset means proportional to size. |
+| `strokeWidth` | On ring and line loaders: `SpokeSpinner`, `ExpressiveArc`, `CometSpinner`, `DualRing`, `HeartbeatLine`, `LiquidFill`, `ClockSpinner`, `RadarSweep`, `Hourglass`, `SegmentedRing`, `Pendulum`, `NeonTrace`, `BatteryCharge`, `SpringCoil`, `HeartPulse`. Unset means proportional to size. |
 | `brush` | Gradient fill on `ExpressiveArc` and `WaveBars`. |
-| count parameters | `spokes`, `dotCount`, `bars`, `rings`, `pairs`, `sparks` where it makes sense. |
+| count parameters | `spokes`, `dotCount`, `bars`, `rings`, `pairs`, `sparks`, `segments`, `moons`, `arms`, `stars`, `layers`, `cells`, `coils`, `teeth`, `blobs`, `lines`, `particles`, `trail` where they make sense. |
+| shape options | `gapDegrees` and `roundCaps` (`SegmentedRing`), `cornerPercent` (`NeonTrace`), `cornerRadius` (`SlidingTiles`), `swingDegrees` (`Pendulum`), `stretch` (`SpringCoil`), `minScale` (`BreathingCircle`), `gap` (`FoldingCube`), and on/off parts: `showTail`, `showOrbits`, `showAvatar`, `showBolt`, `showEcho`. |
+| text | `WaveText(text, style, amplitude)`; screen readers read the text itself. |
 | `progress` | `null` (default) for indeterminate, or 0 to 1 so screen readers read a percentage. |
 | `config` | A [`LoaderConfig`](#loaderconfig): speed, pause, reduced motion, label, announcements. |
 
@@ -101,6 +105,7 @@ CometSpinner(
         reducedMotion = ReducedMotion.Auto,   // Auto, On or Off
         label = stringResource(R.string.loading_photos),   // what a screen reader says
         announce = true,                      // polite announcement when it appears
+        reverse = false,                      // true plays the loop backwards
     ),
 )
 ```
@@ -173,7 +178,7 @@ Android's `Canvas` and `Path` are native and have no such wrappers.
 ## Playground
 
 The gallery app has a Playground tab: pick any loader and change its colour, hue, speed, size,
-reduced motion and pause state, with the matching code shown underneath.
+reduced motion, direction and pause state, with the matching code shown underneath.
 
 ## The loaders
 
@@ -192,6 +197,16 @@ reduced motion and pause state, with the matching code shown underneath.
 | ![](docs/media/RadarSweep.gif) | `RadarSweep` | ![](docs/media/Hourglass.gif) | `Hourglass` |
 | ![](docs/media/PacDots.gif) | `PacDots` | ![](docs/media/SlidingBar.gif) | `SlidingBar` |
 | ![](docs/media/FireworkBurst.gif) | `FireworkBurst` | | |
+| ![](docs/media/TypingBubble.gif) | `TypingBubble` | ![](docs/media/WaveText.gif) | `WaveText` |
+| ![](docs/media/OrbitingMoons.gif) | `OrbitingMoons` | ![](docs/media/FoldingCube.gif) | `FoldingCube` |
+| ![](docs/media/SegmentedRing.gif) | `SegmentedRing` | ![](docs/media/SkeletonShimmer.gif) | `SkeletonShimmer` |
+| ![](docs/media/SpiralGalaxy.gif) | `SpiralGalaxy` | ![](docs/media/Pendulum.gif) | `Pendulum` |
+| ![](docs/media/SlidingTiles.gif) | `SlidingTiles` | ![](docs/media/BreathingCircle.gif) | `BreathingCircle` |
+| ![](docs/media/DominoFall.gif) | `DominoFall` | ![](docs/media/NeonTrace.gif) | `NeonTrace` |
+| ![](docs/media/BatteryCharge.gif) | `BatteryCharge` | ![](docs/media/Rocket.gif) | `Rocket` |
+| ![](docs/media/SignalBars.gif) | `SignalBars` | ![](docs/media/GearPair.gif) | `GearPair` |
+| ![](docs/media/YinYang.gif) | `YinYang` | ![](docs/media/SpringCoil.gif) | `SpringCoil` |
+| ![](docs/media/GooeyOrbit.gif) | `GooeyOrbit` | ![](docs/media/HeartPulse.gif) | `HeartPulse` |
 
 What makes each one distinct is in [LOADERS.md](LOADERS.md).
 

@@ -59,13 +59,14 @@ internal class LoaderMotion(initial: Float) {
 internal fun rememberLoaderMotion(durationMillis: Int, config: LoaderConfig, restPose: Float = 0.15f): LoaderMotion {
     require(durationMillis > 0) { "durationMillis must be positive, was $durationMillis" }
     val motion = remember { LoaderMotion(restPose) }
-    LaunchedEffect(durationMillis, config.speed, config.isRunning, config.reducedMotion, restPose) {
+    LaunchedEffect(durationMillis, config.speed, config.isRunning, config.reducedMotion, config.reverse, restPose) {
         if (!config.isRunning) {
             motion.alpha = 1f
             return@LaunchedEffect
         }
         val systemScale = coroutineContext[MotionDurationScale]
         val periodNanos = durationMillis * 1_000_000.0 / config.speed
+        val direction = if (config.reverse) -1f else 1f
         var last = -1L
         var pulse = 0L
         // One lambda for the whole run, so the loop itself doesn't allocate per frame.
@@ -85,7 +86,7 @@ internal fun rememberLoaderMotion(durationMillis: Int, config: LoaderConfig, res
             } else {
                 motion.alpha = 1f
                 val stretch = if (scale > 0f) scale else 1f
-                motion.progress = fract(motion.progress + (dt / (periodNanos * stretch)).toFloat())
+                motion.progress = fract(motion.progress + direction * (dt / (periodNanos * stretch)).toFloat())
             }
         }
         while (true) withFrameNanos(onFrame)

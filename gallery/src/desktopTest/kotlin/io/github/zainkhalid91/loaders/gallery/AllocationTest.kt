@@ -24,7 +24,7 @@ import kotlin.test.fail
  */
 class AllocationTest {
     // Loaders that rebuild more than a couple of paths every frame, and how many.
-    private val RebuiltPathsPerFrame = mapOf("HeartbeatLine" to 1)
+    private val RebuiltPathsPerFrame = mapOf("HeartbeatLine" to 1, "GooeyOrbit" to 3)
 
     private val threads = ManagementFactory.getThreadMXBean() as com.sun.management.ThreadMXBean
     private val warmup = 120

@@ -1,13 +1,14 @@
 # Changelog
 
-## 0.2.0 (2026-10-22)
+## 0.2.0 (2026-10-28)
 
 Shaped by feedback on the launch post: config, accessibility, reduced motion and customization.
+25 new loaders, taking the library from 20 to 45.
 
 ### New
 
-- **`LoaderConfig`**: one immutable object for speed, pause (`isRunning`), reduced motion, the
-  screen reader label and announcements. Every loader takes `config`.
+- **`LoaderConfig`**: one immutable object for speed, pause (`isRunning`), direction (`reverse`),
+  reduced motion, the screen reader label and announcements. Every loader takes `config`.
 - **App-wide defaults**: `ProvideLoaderDefaults(color, config)`, or the `LocalLoaderColor` and
   `LocalLoaderConfig` CompositionLocals. Every loader's `color` now defaults to `LocalLoaderColor`.
 - **Reduced motion**: `ReducedMotion.Auto` (follows the system animator scale on Android), `On`
@@ -17,8 +18,14 @@ Shaped by feedback on the launch post: config, accessibility, reduced motion and
   "finished" announcements.
 - **Customization**: `strokeWidth` on ring and line loaders, `brush` on `ExpressiveArc` and
   `WaveBars`, `sparks` on `FireworkBurst`.
-- **5 new loaders**: `RadarSweep`, `Hourglass`, `PacDots`, `SlidingBar`, `FireworkBurst`.
-- **Gallery Playground** tab with colour, hue, speed, size, reduced-motion and pause controls.
+- **25 new loaders**: `RadarSweep`, `Hourglass`, `PacDots`, `SlidingBar`, `FireworkBurst`,
+  `TypingBubble`, `WaveText`, `OrbitingMoons`, `FoldingCube`, `SegmentedRing`, `SkeletonShimmer`, `SpiralGalaxy`, `Pendulum`, `SlidingTiles`, `BreathingCircle`, `DominoFall`, `NeonTrace`, `BatteryCharge`, `Rocket`, `SignalBars`, `GearPair`, `YinYang`, `SpringCoil`, `GooeyOrbit`, `HeartPulse`.
+  They come with their own options: counts (segments, moons, arms, stars, layers, cells, coils,
+  teeth, blobs, lines, particles), shape options (gaps, corners, swing, stretch) and parts you can
+  switch off (tail, orbits, avatar, bolt, echo).
+- **`WaveText`**: animated text with your own string and style; screen readers read the text.
+- **`SkeletonShimmer`**: a shimmering placeholder for the content that is loading.
+- **Gallery Playground** tab with colour, hue, speed, size, reduced-motion, reverse and pause controls.
 - **Benchmark app** (`:benchmark`, `tools/benchmark.ps1`) comparing frame times with an
   equivalent Lottie spinner.
 

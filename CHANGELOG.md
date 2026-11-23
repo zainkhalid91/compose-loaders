@@ -1,5 +1,31 @@
 # Changelog
 
+## Unreleased (0.3.0)
+
+Loading patterns from real apps, not just more spinners.
+
+### New
+
+- **`LoadingButton`**: a button that shrinks into a loader, then ends in a tick or a cross (with a
+  shake) and grows back. Ignores taps until idle, so no double submits; keeps its size, so no
+  layout jump; stays a labelled button for screen readers, which hear "Loading", "Done" or
+  "Failed". Takes a `text` or your own content, and any loader.
+- **`ResultLoader`** and **`LoaderState`** (`Idle`, `Loading`, `Success`, `Error`): any loader
+  ends in a drawn tick or cross with a confirm or reject haptic and an announcement.
+- **`rememberLoadingVisibility`**: shows a loader only after `showAfterMillis` (300 ms) and keeps
+  it for at least `minVisibleMillis` (500 ms), so fast requests never flash a spinner.
+- **`PathLoader`** (#46): your logo as a loader, from an `ImageVector` or SVG path data, in three
+  styles (`Trace`, `Fill`, `Shimmer`). With `progress` it shows real progress. Handles shapes with
+  several parts and holes.
+- **`FreezeLoaders`**: pins every loader to one frame for screenshot tests and previews, and lets
+  UI tests with running loaders go idle.
+- `LoaderDefaults.successColor`, `errorColor`, `successLabel` and `errorLabel`.
+- Gallery **Patterns** tab with live demos of all of the above.
+
+### Changed
+
+- `ExpressiveArc` rests on a three-quarter ring (was a short stub) in reduced motion and when frozen.
+
 ## 0.2.0 (2026-10-28)
 
 Shaped by feedback on the launch post: config, accessibility, reduced motion and customization.

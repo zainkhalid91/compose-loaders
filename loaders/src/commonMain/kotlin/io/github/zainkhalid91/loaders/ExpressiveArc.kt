@@ -28,8 +28,9 @@ public fun ExpressiveArc(
     progress: Float? = null,
     config: LoaderConfig = LocalLoaderConfig.current,
 ) {
+    // Rest pose 0.125 is mid-cycle: a three-quarter ring, easy to read when paused or frozen.
     // Four grow/shrink cycles advance the start by 4 * 270 = 3 full turns, so the loop is seamless.
-    LoaderCanvas(modifier, size, size, durationMillis * 4, progress, config, restPose = 0.2f) { motion ->
+    LoaderCanvas(modifier, size, size, durationMillis * 4, progress, config, restPose = 0.125f) { motion ->
         val d = this.size.minDimension
         val stroke = strokePx(strokeWidth, d * 0.1f)
         val topLeft = Offset(center.x - d / 2f + stroke / 2f, center.y - d / 2f + stroke / 2f)

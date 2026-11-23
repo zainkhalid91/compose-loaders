@@ -58,7 +58,10 @@ internal class LoaderMotion(initial: Float) {
 @Composable
 internal fun rememberLoaderMotion(durationMillis: Int, config: LoaderConfig, restPose: Float = 0.15f): LoaderMotion {
     require(durationMillis > 0) { "durationMillis must be positive, was $durationMillis" }
-    val motion = remember { LoaderMotion(restPose) }
+    val frozen = LocalFrozenFrame.current
+    val motion = remember(frozen) { LoaderMotion(frozen?.frame ?: restPose) }
+    // Frozen loaders never ask for a frame, so screenshot tests are stable and the UI goes idle.
+    if (frozen != null) return motion
     LaunchedEffect(durationMillis, config.speed, config.isRunning, config.reducedMotion, config.reverse, restPose) {
         if (!config.isRunning) {
             motion.alpha = 1f

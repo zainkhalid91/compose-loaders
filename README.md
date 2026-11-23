@@ -7,12 +7,15 @@ no images and no other assets: each loader is a single composable drawn on a `Ca
 
 https://github.com/zainkhalid91/compose-loaders/raw/main/docs/media/demo-reel.mp4
 
-- **45 loaders**, with new ones added every week. [LOADERS.md](LOADERS.md) is the registry, so none repeat.
+- **46 loaders**, including one that turns your own logo into a loader, with new ones added every week. [LOADERS.md](LOADERS.md) is the registry, so none repeat.
 - **Kotlin Multiplatform**: works on Android and Compose Desktop (JVM) from the same artifact.
 - **Cheap to run**: frames redraw without recomposing, and loader draw code allocates nothing per
   frame (strokes, paths and brushes are built once per size). See [Performance](#performance).
 - **Accessible**: screen reader labels, determinate progress, polite announcements, reduced motion
   that never freezes, and a test that no loader flashes more than three times a second.
+- **Real-life patterns**: a loading button that ends in a tick, results instead of vanishing
+  spinners, no flashing on fast requests, and frozen loaders for screenshot tests.
+  See [Real-life patterns](#real-life-patterns).
 - **Small**: depends only on Compose runtime, foundation, ui and animation. No Material dependency.
 
 ## Install
@@ -126,6 +129,73 @@ ProvideLoaderDefaults(
 `LocalLoaderColor` and `LocalLoaderConfig` are plain CompositionLocals if you prefer
 `CompositionLocalProvider`. The library itself has no Material dependency; mapping from your
 theme is the one line above.
+
+## Real-life patterns
+
+Loaders are only half of loading. These cover the rest.
+
+### No flashing spinners
+
+A request that takes 80 ms shouldn't flash a spinner for one frame. `rememberLoadingVisibility`
+shows the loader only once loading has lasted 300 ms, then keeps it up for at least 500 ms so it
+never blinks:
+
+```kotlin
+val showLoader by rememberLoadingVisibility(isLoading = state.loading)
+if (showLoader) CometSpinner()
+```
+
+### Loaders that end in a result
+
+`ResultLoader` runs any loader, then closes into a tick on success or a cross with a shake on
+failure. It plays a confirm or reject haptic and a screen reader says "Done" or "Failed".
+
+```kotlin
+ResultLoader(state = LoaderState.Success) { CometSpinner() }
+```
+
+### Loading button
+
+`LoadingButton` shrinks into a loader when tapped, then fills green with a tick (or red with a
+cross) and grows back. Taps are ignored until it is idle again, so a slow network can't cause a
+double submit, and the button keeps its size so the screen doesn't jump.
+
+```kotlin
+var state by remember { mutableStateOf(LoaderState.Idle) }
+LoadingButton(
+    text = "Place order",
+    state = state,
+    onClick = {
+        state = LoaderState.Loading
+        scope.launch { state = if (api.placeOrder()) LoaderState.Success else LoaderState.Error }
+    },
+    onResultShown = { state = LoaderState.Idle },
+)
+```
+
+Pass your own content instead of `text` (for a Material `Text` or an icon), and any loader in the
+library as `loader`.
+
+### Your logo as a loader
+
+`PathLoader` turns any shape into a loader: an `ImageVector` (a Material icon or your imported
+logo) or the path data from an SVG. A pen can trace the outline, liquid can fill it, or a shimmer
+can sweep it. With `progress` set, the logo fills to the real percentage, which suits uploads.
+
+```kotlin
+PathLoader(imageVector = Icons.Rounded.Cloud, style = PathLoaderStyle.Fill, progress = upload)
+PathLoader(pathData = "M13 2 L4 14 L11 14 L10 22 L20 9 L13 9 Z", viewportWidth = 24f, viewportHeight = 24f)
+```
+
+### Screenshot tests
+
+A running loader lands on a different frame in every run, and its endless frame requests can stop
+a UI test from going idle. Wrap the screen in `FreezeLoaders` in your test (production code stays
+as it is) and every loader holds one frame, results show at once and nothing waits:
+
+```kotlin
+paparazzi.snapshot { FreezeLoaders { CheckoutScreen(state) } }
+```
 
 ## Accessibility
 

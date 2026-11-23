@@ -51,18 +51,21 @@ public val GalleryPalette: List<Color> = listOf(
     Color(0xFF34D399),
 )
 
-/** Every loader in [LoaderCatalog] on a grid with a colour picker, plus a playground tab. */
+/** Every loader in [LoaderCatalog] on a grid with a colour picker, plus playground and patterns tabs. */
 @Composable
 public fun LoaderGallery(modifier: Modifier = Modifier) {
     var tint by remember { mutableStateOf(GalleryPalette.first()) }
-    var playground by remember { mutableStateOf(false) }
+    var tab by remember { mutableStateOf(0) }
     Column(modifier.fillMaxSize().background(Background).safeDrawingPadding()) {
         Row(Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Tab("Gallery", !playground) { playground = false }
-            Tab("Playground", playground) { playground = true }
+            Tab("Gallery", tab == 0) { tab = 0 }
+            Tab("Playground", tab == 1) { tab = 1 }
+            Tab("Patterns", tab == 2) { tab = 2 }
         }
-        if (playground) {
+        if (tab == 1) {
             Playground()
+        } else if (tab == 2) {
+            Patterns()
         } else {
             // Many loaders on one screen: announcing each one would flood a screen reader.
             ProvideLoaderDefaults(config = GalleryConfig) {

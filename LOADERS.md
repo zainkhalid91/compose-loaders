@@ -64,6 +64,7 @@ fails the build if it drifts from `LoaderCatalog` or from the public functions i
 | 43 | `SpringCoil` | Physics | weight bounces on a hanging spring whose coils bunch and spread | 2026-W45 |
 | 44 | `GooeyOrbit` | Shapes | blobs orbit a centre drop and stretch from it with liquid metaball bridges | 2026-W45 |
 | 45 | `HeartPulse` | Shapes | heart beats a lub-dub double beat and sends out a fading outline echo | 2026-W45 |
+| 46 | `PathLoader` | Path | any shape you pass (your logo): a pen traces its outline, liquid fills it, or a shimmer sweeps it | 2026-W48 |
 
 ## Backlog (ideas not yet built)
 

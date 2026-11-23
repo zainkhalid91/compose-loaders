@@ -17,4 +17,16 @@ public object LoaderDefaults {
 
     /** Default screen reader label. Pass a translated one through [LoaderConfig.label]. */
     public const val label: String = "Loading"
+
+    /** Colour of the success tick. 3.3:1 against white and 6.3:1 against black. */
+    public val successColor: Color = Color(0xFF16A34A)
+
+    /** Colour of the error cross. 4.8:1 against white. */
+    public val errorColor: Color = Color(0xFFDC2626)
+
+    /** What a screen reader says when loading succeeds. Pass a translated one. */
+    public const val successLabel: String = "Done"
+
+    /** What a screen reader says when loading fails. Pass a translated one. */
+    public const val errorLabel: String = "Failed"
 }

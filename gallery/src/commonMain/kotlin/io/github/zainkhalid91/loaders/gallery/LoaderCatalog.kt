@@ -31,6 +31,7 @@ import io.github.zainkhalid91.loaders.NeonTrace
 import io.github.zainkhalid91.loaders.NewtonCradle
 import io.github.zainkhalid91.loaders.OrbitingMoons
 import io.github.zainkhalid91.loaders.PacDots
+import io.github.zainkhalid91.loaders.PathLoader
 import io.github.zainkhalid91.loaders.Pendulum
 import io.github.zainkhalid91.loaders.PulseRipple
 import io.github.zainkhalid91.loaders.RadarSweep
@@ -110,5 +111,6 @@ public object LoaderCatalog {
         LoaderEntry(43, "SpringCoil", LoaderCategory.Physics, "2026-W45") { SpringCoil(color = it) },
         LoaderEntry(44, "GooeyOrbit", LoaderCategory.Shapes, "2026-W45") { GooeyOrbit(color = it) },
         LoaderEntry(45, "HeartPulse", LoaderCategory.Shapes, "2026-W45") { HeartPulse(color = it) },
+        LoaderEntry(46, "PathLoader", LoaderCategory.Path, "2026-W48") { PathLoader(DemoShapes.Bolt, 24f, 24f, color = it) },
     )
 }

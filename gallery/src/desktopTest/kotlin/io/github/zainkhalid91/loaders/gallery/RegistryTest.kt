@@ -12,7 +12,10 @@ import kotlin.test.fail
  */
 class RegistryTest {
     // Public composables in :loaders that are not loaders themselves.
-    private val Helpers = setOf("ProvideLoaderDefaults", "LoadingAnnouncer")
+    private val Helpers = setOf(
+        "ProvideLoaderDefaults", "LoadingAnnouncer", "FreezeLoaders", "ResultLoader", "LoadingButton",
+        "rememberLoadingVisibility",
+    )
 
     private val root = generateSequence(File("").absoluteFile) { it.parentFile }
         .first { File(it, "LOADERS.md").exists() }

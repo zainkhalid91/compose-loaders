@@ -38,7 +38,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.github.zainkhalid91.compose-loaders:loaders:0.2.0")
+    implementation("com.github.zainkhalid91.compose-loaders:loaders:0.3.0")
 }
 ```
 
@@ -50,14 +50,14 @@ Groovy (`settings.gradle` / `build.gradle`):
 ```groovy
 maven { url 'https://jitpack.io' }
 
-implementation 'com.github.zainkhalid91.compose-loaders:loaders:0.2.0'
+implementation 'com.github.zainkhalid91.compose-loaders:loaders:0.3.0'
 ```
 
 Version catalog (`gradle/libs.versions.toml`):
 
 ```toml
 [libraries]
-compose-loaders = { module = "com.github.zainkhalid91.compose-loaders:loaders", version = "0.2.0" }
+compose-loaders = { module = "com.github.zainkhalid91.compose-loaders:loaders", version = "0.3.0" }
 ```
 
 Compose Multiplatform: add it to `commonMain.dependencies { }`. Android and desktop (JVM)

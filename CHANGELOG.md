@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased (0.3.0)
+## 0.3.0 (2026-11-23)
 
 Loading patterns from real apps, not just more spinners.
 

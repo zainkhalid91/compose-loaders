@@ -16,56 +16,53 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.ImageComposeScene
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.zainkhalid91.loaders.DnaHelix
-import io.github.zainkhalid91.loaders.GearPair
-import io.github.zainkhalid91.loaders.GooeyOrbit
-import io.github.zainkhalid91.loaders.HeartPulse
+import io.github.zainkhalid91.loaders.CometSpinner
+import io.github.zainkhalid91.loaders.DualRing
+import io.github.zainkhalid91.loaders.FreezeLoaders
 import io.github.zainkhalid91.loaders.LoaderConfig
-import io.github.zainkhalid91.loaders.NeonTrace
+import io.github.zainkhalid91.loaders.LoaderState
+import io.github.zainkhalid91.loaders.LoadingButton
+import io.github.zainkhalid91.loaders.PathLoader
+import io.github.zainkhalid91.loaders.PathLoaderStyle
 import io.github.zainkhalid91.loaders.ProvideLoaderDefaults
-import io.github.zainkhalid91.loaders.ReducedMotion
-import io.github.zainkhalid91.loaders.SegmentedRing
-import io.github.zainkhalid91.loaders.SpringCoil
-import org.jetbrains.skia.EncodedImageFormat
+import io.github.zainkhalid91.loaders.ResultLoader
+import io.github.zainkhalid91.loaders.rememberLoadingVisibility
 import java.io.File
 import kotlin.math.roundToInt
 
 private const val ReelFps = 30
 
-// Scene lengths in seconds; the first shows every new loader, so it stays up longer.
-private val Scenes = floatArrayOf(5f, 3f, 3f, 3.2f, 3f, 3f, 3f, 3.4f)
+// Scene lengths in seconds.
+private val Scenes = floatArrayOf(5.6f, 3.4f, 4.2f, 5.4f, 4.8f, 3.8f, 3.4f)
+
+private val Green = Color(0xFF34D399)
+private val Red = Color(0xFFF87171)
 
 /**
- * Renders a 1080 x 1350 (4:5) demo of 0.2.0, frame by frame, from the real library.
- * Usage: demoreel <outDir>. tools/make-gifs.sh turns the frames into docs/media/demo-reel.mp4.
+ * Renders a 1080 x 1350 (4:5) demo of 0.3.0, frame by frame, from the real library on a
+ * virtual clock. Usage: demoreel <outDir>. tools/make-gifs.sh turns the frames into
+ * docs/media/demo-reel.mp4.
  */
-@OptIn(ExperimentalComposeUiApi::class)
 fun main(args: Array<String>) {
     val out = File(args.getOrElse(0) { "build/demoreel" }).apply { mkdirs() }
     val total = (Scenes.sum() * ReelFps).roundToInt()
     val time = mutableFloatStateOf(0f)
-    val scene = ImageComposeScene(1080, 1350, Density(3f)) { Reel(time.floatValue) }
-    try {
+    VirtualScene(1080, 1350, 3f) { Reel(time.floatValue) }.use { scene ->
         for (i in 0 until total) {
             time.floatValue = i / ReelFps.toFloat()
-            val image = scene.render(i * 1_000_000_000L / ReelFps)
-            File(out, "%04d.png".format(i)).writeBytes(image.encodeToData(EncodedImageFormat.PNG)!!.bytes)
+            scene.render(i * 1_000_000_000L / ReelFps).writePng(File(out, "%04d.png".format(i)))
         }
-    } finally {
-        scene.close()
     }
     println("Wrote $total frames to ${out.absolutePath}")
 }
@@ -78,126 +75,245 @@ private fun Reel(t: Float) {
         start += Scenes[index]
         index++
     }
-    val local = ((t - start) / Scenes[index]).coerceIn(0f, 1f)
-    val quiet = LoaderConfig(announce = false)
+    val s = t - start
     val title: String
     val code: String
     val stage: @Composable () -> Unit
     when (index) {
         0 -> {
-            title = "20 new loaders"
-            code = "45 loaders · pure Compose · no assets"
-            stage = { NewLoaderGrid() }
+            title = "Button becomes its loader"
+            code = "LoadingButton(text = \"Place order\",\n    state = state, onClick = { placeOrder() })"
+            stage = { ButtonScene(s) }
         }
         1 -> {
-            val hue = local * 300f
-            title = "Any colour"
-            code = "GooeyOrbit(color = Color.hsv(${hue.roundToInt()}f, 0.62f, 1f))"
-            stage = { GooeyOrbit(color = Color.hsv(hue, 0.62f, 1f), size = 120.dp, config = quiet) }
+            title = "No double submits"
+            code = "// Taps are ignored until state is Idle again"
+            stage = { DoubleTapScene(s) }
         }
         2 -> {
-            val speed = 0.4f + 2.6f * local
-            title = "Any speed"
-            code = "GearPair(config = LoaderConfig(speed = ${speed.fmt()}f))"
-            stage = { GearPair(color = GalleryPalette[3], size = 120.dp, config = quiet.copy(speed = speed)) }
+            title = "Loaders that end in a result"
+            code = "ResultLoader(state) { CometSpinner() }"
+            stage = { ResultScene(s) }
         }
         3 -> {
-            val reverse = local >= 0.5f
-            title = "Run it backwards"
-            code = "SegmentedRing(config = LoaderConfig(reverse = $reverse))"
-            stage = { SegmentedRing(color = GalleryPalette[1], size = 120.dp, config = quiet.copy(reverse = reverse)) }
+            title = "No flash on fast requests"
+            code = "val show by rememberLoadingVisibility(isLoading)\nif (show) CometSpinner()"
+            stage = { FlickerScene(s) }
         }
         4 -> {
-            val stroke = 2f + 8f * local
-            title = "Stroke width"
-            code = "NeonTrace(strokeWidth = ${stroke.roundToInt()}.dp)"
-            stage = { NeonTrace(color = GalleryPalette[2], size = 120.dp, strokeWidth = stroke.dp, config = quiet) }
+            title = "Your logo as a loader"
+            code = "PathLoader(YourLogo, style = Fill, progress = upload)"
+            stage = { LogoScene(s) }
         }
         5 -> {
-            val coils = 3 + (local * 9).toInt()
-            title = "Counts and shapes"
-            code = "SpringCoil(coils = $coils)"
-            stage = { SpringCoil(color = GalleryPalette[4], size = 130.dp, coils = coils, config = quiet) }
-        }
-        6 -> {
-            title = "Reduced motion: never frozen"
-            code = "DnaHelix(config = LoaderConfig(reducedMotion = On))"
-            stage = { DnaHelix(color = GalleryPalette[0], size = 220.dp, config = quiet.copy(reducedMotion = ReducedMotion.On)) }
+            title = "Stable screenshot tests"
+            code = "paparazzi.snapshot { FreezeLoaders { Screen() } }"
+            stage = { FreezeScene() }
         }
         else -> {
-            val percent = (local * 100).roundToInt().coerceAtMost(100)
-            title = "Screen reader ready"
-            code = "HeartPulse(progress = ${(percent / 100f).fmt()}f, config = LoaderConfig(label = \"Loading photos\"))"
-            stage = { ScreenReaderStage(percent, quiet) }
+            title = "Compose Loaders 0.3.0"
+            code = "implementation(\"com.github.zainkhalid91.compose-loaders:loaders:0.3.0\")"
+            stage = { OutroScene(s) }
         }
     }
-    val tall = index == 0
-    Column(
-        Modifier.fillMaxSize().background(Background).padding(horizontal = 24.dp, vertical = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        BasicText("Compose Loaders 0.2.0", style = TextStyle(color = Muted, fontSize = 15.sp, fontWeight = FontWeight.SemiBold))
-        Spacer(Modifier.height(8.dp))
-        BasicText(title, style = TextStyle(color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold))
-        Spacer(Modifier.height(16.dp))
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .height(if (tall) 262.dp else 210.dp)
-                .background(Card, RoundedCornerShape(24.dp))
-                .border(1.dp, CardBorder, RoundedCornerShape(24.dp)),
-            contentAlignment = Alignment.Center,
-        ) { stage() }
-        Spacer(Modifier.height(16.dp))
-        BasicText(
-            code,
-            Modifier.fillMaxWidth().background(Color(0xFF0B0D11), RoundedCornerShape(14.dp)).padding(14.dp),
-            style = TextStyle(color = Color(0xFFD7DBE6), fontFamily = FontFamily.Monospace, fontSize = 11.sp, lineHeight = 16.sp),
+    ProvideLoaderDefaults(config = LoaderConfig(announce = false)) {
+        Column(
+            Modifier.fillMaxSize().background(Background).padding(horizontal = 24.dp, vertical = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            BasicText("Compose Loaders 0.3.0", style = TextStyle(color = Muted, fontSize = 15.sp, fontWeight = FontWeight.SemiBold))
+            Spacer(Modifier.height(8.dp))
+            BasicText(title, style = TextStyle(color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Bold))
+            Spacer(Modifier.height(16.dp))
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(236.dp)
+                    .background(Card, RoundedCornerShape(24.dp))
+                    .border(1.dp, CardBorder, RoundedCornerShape(24.dp)),
+                contentAlignment = Alignment.Center,
+            ) {
+                // A fresh composition per scene, so each one starts from its first frame.
+                key(index) { stage() }
+            }
+            Spacer(Modifier.height(16.dp))
+            BasicText(
+                code,
+                Modifier.fillMaxWidth().background(Color(0xFF0B0D11), RoundedCornerShape(14.dp)).padding(14.dp),
+                style = TextStyle(color = Color(0xFFD7DBE6), fontFamily = FontFamily.Monospace, fontSize = 11.sp, lineHeight = 16.sp),
+            )
+            Spacer(Modifier.weight(1f))
+            BasicText("Android + Desktop · open source · JitPack", style = TextStyle(color = Muted, fontSize = 12.sp))
+        }
+    }
+}
+
+@Composable
+private fun Caption(text: String, color: Color = Muted) {
+    BasicText(text, style = TextStyle(color = color, fontSize = 12.sp, fontWeight = FontWeight.Medium))
+}
+
+@Composable
+private fun ButtonScene(s: Float) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(22.dp)) {
+        LoadingButton(
+            text = "Place order",
+            state = timeline(s, 0.5f, 2.3f, 3.8f, LoaderState.Success),
+            onClick = {},
+            containerColor = GalleryPalette[0],
+            height = 52.dp,
+            haptics = false,
+            modifier = Modifier.width(200.dp).tap(s, 0.5f),
         )
-        Spacer(Modifier.weight(1f))
-        BasicText(
-            "Android + Desktop · open source · JitPack",
-            style = TextStyle(color = Muted, fontSize = 12.sp),
+        LoadingButton(
+            text = "Pay now",
+            state = timeline(s, 1.0f, 2.8f, 4.3f, LoaderState.Error),
+            onClick = {},
+            containerColor = Color(0xFF0EA5E9),
+            height = 52.dp,
+            haptics = false,
+            modifier = Modifier.width(200.dp).tap(s, 1.0f),
         )
     }
 }
 
-/** The 20 loaders added in this release, four across, in the gallery palette. */
+private val DoubleTaps = floatArrayOf(0.4f, 0.9f, 1.3f, 1.65f, 2.0f, 2.3f)
+
 @Composable
-private fun NewLoaderGrid() {
-    val fresh = LoaderCatalog.entries.filter { it.batch == "2026-W45" }
-    ProvideLoaderDefaults(config = LoaderConfig(announce = false)) {
-        Column(verticalArrangement = Arrangement.spacedBy(3.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            for (row in fresh.chunked(4)) {
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    for ((column, entry) in row.withIndex()) {
-                        Box(Modifier.size(width = 74.dp, height = 47.dp), contentAlignment = Alignment.Center) {
-                            Box(Modifier.graphicsLayer(scaleX = 0.78f, scaleY = 0.78f)) {
-                                entry.content(GalleryPalette[(entry.id + column) % GalleryPalette.size])
-                            }
-                        }
-                    }
+private fun DoubleTapScene(s: Float) {
+    val taps = DoubleTaps.count { s >= it }
+    val last = DoubleTaps.lastOrNull { s >= it } ?: -1f
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        LoadingButton(
+            text = "Place order",
+            state = if (s < 0.4f) LoaderState.Idle else LoaderState.Loading,
+            onClick = {},
+            containerColor = GalleryPalette[0],
+            height = 52.dp,
+            haptics = false,
+            modifier = Modifier.width(200.dp).tap(s, last),
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(28.dp)) {
+            Caption("Taps: $taps", Color.White)
+            Caption("Orders sent: ${if (taps > 0) 1 else 0}", Green)
+        }
+    }
+}
+
+@Composable
+private fun ResultScene(s: Float) {
+    Row(horizontalArrangement = Arrangement.spacedBy(40.dp), verticalAlignment = Alignment.CenterVertically) {
+        ResultLoader(timeline(s, 0f, 1.2f, 99f, LoaderState.Success), color = GalleryPalette[0], size = 64.dp, haptics = false)
+        ResultLoader(timeline(s, 0f, 1.6f, 99f, LoaderState.Success), color = GalleryPalette[1], size = 64.dp, haptics = false) {
+            CometSpinner(color = GalleryPalette[1], size = 64.dp)
+        }
+        ResultLoader(timeline(s, 0f, 2.0f, 99f, LoaderState.Error), color = GalleryPalette[2], size = 64.dp, haptics = false) {
+            DualRing(color = GalleryPalette[2], size = 64.dp)
+        }
+    }
+}
+
+@Composable
+private fun FlickerScene(s: Float) {
+    val fast = s in 0.7f..0.85f
+    val slow = s in 2.6f..4.2f
+    val loading = fast || slow
+    val smart by rememberLoadingVisibility(loading)
+    val status = when {
+        s < 0.85f -> "Fast request: 150 ms"
+        s < 2.6f -> "Fast request: 150 ms, done"
+        s <= 4.2f -> "Slow request: 1.6 s"
+        else -> "Slow request: 1.6 s, done"
+    }
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Caption(status, Color.White)
+        Spacer(Modifier.height(14.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            FlickerPanel("if (isLoading)", loading)
+            FlickerPanel("rememberLoadingVisibility", smart)
+        }
+    }
+}
+
+@Composable
+private fun FlickerPanel(label: String, show: Boolean) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(Modifier.size(140.dp, 110.dp).background(Background, RoundedCornerShape(14.dp)), contentAlignment = Alignment.Center) {
+            if (show) CometSpinner(color = GalleryPalette[0], size = 44.dp)
+        }
+        Spacer(Modifier.height(8.dp))
+        Caption(label)
+    }
+}
+
+@Composable
+private fun LogoScene(s: Float) {
+    val upload = (s / 3.6f).coerceIn(0f, 1f)
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.Bottom) {
+        LogoCell("Trace") { PathLoader(DemoShapes.Badge, 24f, 24f, size = 56.dp, style = PathLoaderStyle.Trace, color = GalleryPalette[0]) }
+        LogoCell("Fill") { PathLoader(DemoShapes.Cloud, 24f, 24f, size = 56.dp, style = PathLoaderStyle.Fill, color = GalleryPalette[1]) }
+        LogoCell("Shimmer") { PathLoader(DemoShapes.Bolt, 24f, 24f, size = 56.dp, style = PathLoaderStyle.Shimmer, color = GalleryPalette[3]) }
+        LogoCell("${(upload * 100).roundToInt()}%") {
+            PathLoader(DemoShapes.Cloud, 24f, 24f, size = 56.dp, style = PathLoaderStyle.Fill, color = GalleryPalette[4], progress = upload)
+        }
+    }
+}
+
+@Composable
+private fun LogoCell(label: String, content: @Composable () -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(68.dp)) {
+        content()
+        Spacer(Modifier.height(10.dp))
+        Caption(label)
+    }
+}
+
+@Composable
+private fun FreezeScene() {
+    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        FreezePanel("Without", 0.12f, 0.58f, "Screenshots differ", Red)
+        FreezePanel("FreezeLoaders", null, null, "Identical every run", Green)
+    }
+}
+
+@Composable
+private fun FreezePanel(title: String, first: Float?, second: Float?, verdict: String, color: Color) {
+    Column(
+        Modifier.background(Background, RoundedCornerShape(14.dp)).padding(14.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Caption(title, Color.White)
+        Spacer(Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            for ((run, frame) in listOf(1 to first, 2 to second)) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    FreezeLoaders(frame) { CometSpinner(color = GalleryPalette[1], size = 44.dp) }
+                    Spacer(Modifier.height(6.dp))
+                    Caption("Run $run")
                 }
             }
         }
+        Spacer(Modifier.height(10.dp))
+        Caption(verdict, color)
     }
 }
 
-/** What a screen reader hears, shown as a caption under the loader. */
 @Composable
-private fun ScreenReaderStage(percent: Int, config: LoaderConfig) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        HeartPulse(color = GalleryPalette[2], size = 100.dp, progress = percent / 100f, config = config.copy(label = "Loading photos"))
-        Spacer(Modifier.height(16.dp))
-        Row(
-            Modifier.background(Color(0xFF2B2F3A), RoundedCornerShape(50)).padding(horizontal = 14.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(Modifier.size(8.dp).background(GalleryPalette[4], RoundedCornerShape(50)))
-            Spacer(Modifier.width(8.dp))
-            BasicText("TalkBack: \"Loading photos, $percent percent\"", style = TextStyle(color = Color.White, fontSize = 12.sp))
+private fun OutroScene(s: Float) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(18.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(26.dp), verticalAlignment = Alignment.CenterVertically) {
+            PathLoader(DemoShapes.Badge, 24f, 24f, size = 56.dp, color = GalleryPalette[0])
+            ResultLoader(timeline(s, 0f, 1.0f, 99f, LoaderState.Success), color = GalleryPalette[1], size = 56.dp, haptics = false)
+            LoadingButton(
+                text = "Ship it",
+                state = timeline(s, 0.3f, 1.4f, 99f, LoaderState.Success),
+                onClick = {},
+                containerColor = GalleryPalette[2],
+                haptics = false,
+                modifier = Modifier.width(130.dp),
+            )
         }
+        Caption("46 loaders · LoadingButton · ResultLoader · PathLoader", Color.White)
+        Caption("Pure Compose. No Lottie, no assets.")
     }
 }
-
-private fun Float.fmt(): String = ((this * 10).roundToInt() / 10f).toString()

@@ -147,6 +147,8 @@ if (showLoader) CometSpinner()
 
 ### Loaders that end in a result
 
+![ResultLoader closing into ticks and a cross](docs/media/result-loader.gif)
+
 `ResultLoader` runs any loader, then closes into a tick on success or a cross with a shake on
 failure. It plays a confirm or reject haptic and a screen reader says "Done" or "Failed".
 
@@ -155,6 +157,8 @@ ResultLoader(state = LoaderState.Success) { CometSpinner() }
 ```
 
 ### Loading button
+
+![LoadingButton succeeding and failing](docs/media/loading-button.gif)
 
 `LoadingButton` shrinks into a loader when tapped, then fills green with a tick (or red with a
 cross) and grows back. Taps are ignored until it is idle again, so a slow network can't cause a
@@ -177,6 +181,8 @@ Pass your own content instead of `text` (for a Material `Text` or an icon), and 
 library as `loader`.
 
 ### Your logo as a loader
+
+![PathLoader trace, fill, shimmer and upload progress](docs/media/path-loader.gif)
 
 `PathLoader` turns any shape into a loader: an `ImageVector` (a Material icon or your imported
 logo) or the path data from an SVG. A pen can trace the outline, liquid can fill it, or a shimmer
@@ -277,6 +283,7 @@ reduced motion, direction and pause state, with the matching code shown undernea
 | ![](docs/media/SignalBars.gif) | `SignalBars` | ![](docs/media/GearPair.gif) | `GearPair` |
 | ![](docs/media/YinYang.gif) | `YinYang` | ![](docs/media/SpringCoil.gif) | `SpringCoil` |
 | ![](docs/media/GooeyOrbit.gif) | `GooeyOrbit` | ![](docs/media/HeartPulse.gif) | `HeartPulse` |
+| ![](docs/media/PathLoader.gif) | `PathLoader` (your shape) | | |
 
 What makes each one distinct is in [LOADERS.md](LOADERS.md).
 

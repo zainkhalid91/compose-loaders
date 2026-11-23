@@ -30,6 +30,8 @@ kotlin {
         getByName("desktopMain").dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+            // Virtual time for the recorders, so delays inside loaders follow the video's clock.
+            implementation(libs.kotlinx.coroutines.test)
         }
     }
 }
@@ -49,6 +51,14 @@ tasks.register<JavaExec>("recordDemoReel") {
     classpath(desktopMain.output.allOutputs, desktopMain.runtimeDependencyFiles)
     mainClass.set("io.github.zainkhalid91.loaders.gallery.DemoReelKt")
     args(layout.buildDirectory.dir("demoreel").get().asFile.absolutePath)
+}
+
+// ./gradlew :gallery:recordPatterns renders the README pattern demos to build/patterns.
+tasks.register<JavaExec>("recordPatterns") {
+    description = "Renders the loading button, result and logo demos frame by frame to build/patterns"
+    classpath(desktopMain.output.allOutputs, desktopMain.runtimeDependencyFiles)
+    mainClass.set("io.github.zainkhalid91.loaders.gallery.RecordPatternsKt")
+    args(layout.buildDirectory.dir("patterns").get().asFile.absolutePath)
 }
 
 compose.desktop {
